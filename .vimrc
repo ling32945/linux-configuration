@@ -74,14 +74,24 @@ set t_vb=
 set tm=500
 
 "==========================================
-" Show 展示/排班等界面格式设置
+" Show 展示/排版等界面格式设置
 "==========================================
 
 "显示行号：
 set number
 set nowrap                    " 取消换行。
 
-color darkblue     " 设置背景主题
+"set background=light
+
+"if has('gui_running')
+"    set background=light
+"else
+"    set background=dark
+"endif
+
+"colors darkblue     " 设置背景主题
+"colorscheme solarized
+colorscheme Tomorrow-Night
 
 " 高亮显示匹配的括号
 set showmatch
@@ -106,7 +116,8 @@ set foldenable
 " manual    手工折叠
 " indent    使用缩进表示折叠
 " expr      使用表达式定义折叠
-" syntax    使用语法定义折叠
+" syntax    使用语法高亮
+syntax enable
 " diff      对没有更改的文本进行折叠
 " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
 set foldmethod=indent
@@ -187,14 +198,14 @@ set laststatus=2
 " file encode, 文件编码,格式
 "==========================================
 " 设置新文件的编码为 UTF-8
-"set fileencodings=utf-8,ucs-bom,gb2312,big5,latin1
+"set fileencodings=ucs-bom,utf-8,gb2312,big5,latin1
 
 set encoding=utf-8
 " 自动判断编码时，依次尝试以下编码：
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set helplang=cn
-language message zh_CN.UTF-8
-set langmenu=zh_CN.UTF-8
+"language message zh_CN.UTF-8 " Gvim 下启用此属性
+"set langmenu=zh_CN.UTF-8 " Gvim 下启用此属性
 "set enc=2byte-gb18030
 " 下面这句只影响普通模式 (非图形界面) 下的 Vim。
 set termencoding=utf-8
@@ -206,14 +217,16 @@ set ffs=unix,dos,mac
 set formatoptions+=m
 " 合并两行中文时，不在中间加空格：
 set formatoptions+=B
+
 if has("win32")
-	set fileencoding=chinese
+    set fileencoding=chinese
 else
-	set fileencoding=utf-8
+    set fileencoding=utf-8
 endif
-"解决菜单乱码
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
+
+"解决GVIM菜单乱码
+"source $VIMRUNTIME/delmenu.vim
+"source $VIMRUNTIME/menu.vim
 
 "==========================================
 " others 其它配置
@@ -331,8 +344,6 @@ autocmd vimenter * if (!argc() && exists(":NERDTree")) | NERDTree | endif
 " 只剩 NERDTree时自动关闭
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" 设置当文件被改动时自动载入
-set autoread
 " quickfix模式
 autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 "代码补全 
@@ -354,11 +365,6 @@ set nocompatible
 set noeb
 " 在处理未保存或只读文件的时候，弹出确认
 set confirm
-"禁止生成临时文件
-set nobackup
-set noswapfile
-"搜索忽略大小写
-set ignorecase
 
 set linespace=0
 " 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
@@ -367,12 +373,6 @@ set linespace=0
 set report=0
 " 在被分割的窗口间显示空白，便于阅读
 set fillchars=vert:\ ,stl:\ ,stlnc:\
-" 高亮显示匹配的括号
-set showmatch
-" 匹配括号高亮的时间（单位是十分之一秒）
-set matchtime=1
-" 光标移动到buffer的顶部和底部时保持3行距离
-set scrolloff=3
 " 为C程序提供自动缩进
 "自动补全
 "":inoremap ( ()<ESC>i
