@@ -57,26 +57,6 @@ fi
 
 
 # Install Vim color scheme
-which git
-if [ $? -ne 0 ]; then
-    echo "Info: Git is not installed, install it first!" 
-    if [[ $curOSVersion = ${OSVersion[0]} || $curOSVersion = ${OSVersion[1]} ]]; then
-        apt-get install git 
-    elif [ $curOSVersion = ${OSVersion[2]} ]; then
-        yum -y install git
-    fi
-
-    git config --global user.name "Jae Liu"
-    git config --global user.email ling32945@sina.com
-    git config --global core.editor vim
-    git config --global merge.tool vimdiff
-
-    git config --global color.status auto
-    git config --global color.diff auto
-    git config --global color.branch auto
-    git config --global color.interactive auto
-fi
-
 if [ ! -d ~/.vim/colors ]; then
     mkdir ~/.vim/colors
     chown ${curUser}:${curUser}  ~/.vim/colors
@@ -101,6 +81,37 @@ if [ -f $screenFilePath ]; then
     cp $screenFilePath ~/
     chown $curUser:$curUser ~/.screenrc
 fi
+
+# Install Vim Vundle
+if [ -d ~/.vim/bundle/Vundle.vim ]; then
+    cd ~/.vim/bundle/Vundle.vim
+    git pull
+else
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+fi
+
+
+# Install Git
+which git
+if [ $? -ne 0 ]; then
+    echo "Info: Git is not installed, install it first!" 
+    if [[ $curOSVersion = ${OSVersion[0]} || $curOSVersion = ${OSVersion[1]} ]]; then
+        apt-get install git 
+    elif [ $curOSVersion = ${OSVersion[2]} ]; then
+        yum -y install git
+    fi
+
+    git config --global user.name "Jae Liu"
+    git config --global user.email ling32945@sina.com
+    git config --global core.editor vim
+    git config --global merge.tool vimdiff
+
+    git config --global color.status auto
+    git config --global color.diff auto
+    git config --global color.branch auto
+    git config --global color.interactive auto
+fi
+
 
 echo "Info: Add User Group Web"
 #grep -E ":600:" /etc/group >& /dev/null
