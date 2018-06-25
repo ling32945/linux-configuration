@@ -15,10 +15,10 @@
 "==========================================
 
 
-"========================================== " Vundle Vundle 设置
-"=========================================
+"==========================================
+" Vundle Vundle 设置
+"==========================================
 
-set nocompatible              " be iMproved, required
 filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
@@ -50,12 +50,11 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Plugin 'scrooloose/nerdtree'
 " Install bufexplorer
 Plugin 'jlanzarotta/bufexplorer'
+" Install YouCompleteMe
+Plugin 'Valloric/YouCompleteMe'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
 "
 " Brief help
 " :PluginList       - lists configured plugins
@@ -71,8 +70,6 @@ filetype plugin indent on    " required
 " General 基础设置
 "==========================================
 
-"set guifont=Monaco:h20          " 字体 && 字号
-
 " history存储长度。
 set history=2000
 
@@ -87,7 +84,7 @@ filetype plugin indent on
 
 "非兼容vi模式。去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 set nocompatible
-set autoread          " 文件修改之后自动载入。
+set autoread            " 文件修改之后自动载入。
 set shortmess=atI       " 启动的时候不显示那个援助索马里儿童的提示
 
 " 备份,到另一个位置. 防止误删, 目前是取消备份
@@ -110,28 +107,46 @@ set t_ti= t_te=
 
 "- 则点击光标不会换,用于复制
 set mouse-=a           " 鼠标暂不启用, 键盘党....
+"set mouse=a
 " 修复ctrl+m 多光标操作选择的bug，但是改变了ctrl+v进行字符选中时将包含光标下的字符
 "set selection=exclusive
 set selection=inclusive
 set selectmode=mouse,key
-
-"set mouse=a
 "set selection=exclusive
 "set selectmode=mouse,key
 
 " No annoying sound on errors
 " 去掉输入错误的提示声音
-set title                " change the terminal's title
-set novisualbell           " don't beep
-set noerrorbells         " don't beep
+set title               " change the terminal's title
+set novisualbell        " don't beep
+set noerrorbells        " don't beep
 set t_vb=
 set tm=500
 
 " 设置buffer可写
 "set modifiable
-set ma
 
+" 设置使用文本标记
+set ma
 "set noma
+
+"==========================================
+" file encode, 文件编码,格式
+"==========================================
+
+set encoding=utf-8
+" 自动判断编码时，依次尝试以下编码：
+"set fileencodings=ucs-bom,utf-8,chinese,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set helplang=cn
+set langmenu=zh_CN.UTF-8 " Gvim 下启用此属性
+language zh_CN.UTF-8 " Gvim 下启用此属性
+"set enc=2byte-gb18030
+" 下面这句只影响普通模式 (非图形界面) 下的 Vim。
+set termencoding=utf-8
+
+"set guifont=Monaco:h20          " 字体 && 字号
+set guifont=Source_Code_Pro:h12 "设置字体为Source Code Pro，大小12，设置单字节字符
+"set guifontwide=幼圆:h12 "设置字体为 幼圆，大小12，设置双字节字符
 
 "==========================================
 " Show 展示/排版等界面格式设置
@@ -254,22 +269,6 @@ set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strf
 " Always show the status line
 set laststatus=2
 
-"==========================================
-" file encode, 文件编码,格式
-"==========================================
-" 设置新文件的编码为 UTF-8
-"set fileencodings=ucs-bom,utf-8,gb2312,big5,latin1
-
-set encoding=utf-8
-" 自动判断编码时，依次尝试以下编码：
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-set helplang=cn
-"language message zh_CN.UTF-8 " Gvim 下启用此属性
-"set langmenu=zh_CN.UTF-8 " Gvim 下启用此属性
-"set enc=2byte-gb18030
-" 下面这句只影响普通模式 (非图形界面) 下的 Vim。
-set termencoding=utf-8
-
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
@@ -285,19 +284,44 @@ else
 endif
 
 "解决GVIM菜单乱码
-"source $VIMRUNTIME/delmenu.vim
-"source $VIMRUNTIME/menu.vim
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 
+"共享剪贴板  
+set clipboard+=unnamed 
+"自动保存
+set autowrite
+"set guioptions-=T           " 隐藏工具栏
+"set guioptions-=m           " 隐藏菜单栏
+""set foldcolumn=0
+""set foldmethod=indent 
+""set foldlevel=3 
+" 不要使用vi的键盘模式，而是vim自己的
+" 去掉输入错误的提示声音
+set noeb
+" 在处理未保存或只读文件的时候，弹出确认
+set confirm
+
+set linespace=0
+" 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
+
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0
+" 在被分割的窗口间显示空白，便于阅读
+set fillchars=vert:\ ,stl:\ ,stlnc:\
+" 为C程序提供自动缩进
+"自动补全
 "==========================================
 " others 其它配置
 "==========================================
 autocmd! bufwritepost _vimrc source % " vimrc文件修改之后自动加载。 windows。
 autocmd! bufwritepost .vimrc source % " vimrc文件修改之后自动加载。 linux。
 
-" 自动补全配置
+" 代码自动补全配置
 "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 "set completeopt+=longest
 set completeopt=longest,menu
+"set completeopt=preview,menu 
 
 "离开插入模式后自动关闭预览窗口
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -347,7 +371,7 @@ set whichwrap+=<,>,h,l
 "set whichwrap+=<,>,h,l
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"""""新文件标题
+"""""新建文件
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "新建.c,.h,.sh,.java文件，自动插入文件头 
 autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.py exec ":call SetTitle()" 
@@ -406,35 +430,6 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 
 " quickfix模式
 autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
-"代码补全 
-set completeopt=preview,menu 
-"允许插件  
-filetype plugin on
-"共享剪贴板  
-set clipboard+=unnamed 
-"自动保存
-set autowrite
-"set guioptions-=T           " 隐藏工具栏
-"set guioptions-=m           " 隐藏菜单栏
-""set foldcolumn=0
-""set foldmethod=indent 
-""set foldlevel=3 
-" 不要使用vi的键盘模式，而是vim自己的
-set nocompatible
-" 去掉输入错误的提示声音
-set noeb
-" 在处理未保存或只读文件的时候，弹出确认
-set confirm
-
-set linespace=0
-" 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
-
-" 通过使用: commands命令，告诉我们文件的哪一行被改变过
-set report=0
-" 在被分割的窗口间显示空白，便于阅读
-set fillchars=vert:\ ,stl:\ ,stlnc:\
-" 为C程序提供自动缩进
-"自动补全
 "":inoremap ( ()<ESC>i
 "":inoremap ) <c-r>=ClosePair(')')<CR>
 ":inoremap { {<CR>}<ESC>O
@@ -450,9 +445,6 @@ set fillchars=vert:\ ,stl:\ ,stlnc:\
 ""		return a:char
 ""	endif
 ""endfunction
-filetype plugin indent on 
-"打开文件类型检测, 加了这句才可以用智能补全
-set completeopt=longest,menu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CTags的设定  
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
