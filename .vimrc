@@ -136,17 +136,25 @@ set ma
 
 set encoding=utf-8
 " 自动判断编码时，依次尝试以下编码：
-"set fileencodings=ucs-bom,utf-8,chinese,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set fileencodings=ucs-bom,utf-8,chinese,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+
 set helplang=cn
-set langmenu=zh_CN.UTF-8 " Gvim 下启用此属性
-language zh_CN.UTF-8 " Gvim 下启用此属性
+"set langmenu=zh_CN.utf-8 " Gvim 下启用此属性
 "set enc=2byte-gb18030
+
 " 下面这句只影响普通模式 (非图形界面) 下的 Vim。
 set termencoding=utf-8
 
 "set guifont=Monaco:h20          " 字体 && 字号
 set guifont=Source_Code_Pro:h12 "设置字体为Source Code Pro，大小12，设置单字节字符
 "set guifontwide=幼圆:h12 "设置字体为 幼圆，大小12，设置双字节字符
+
+" 解决GVIM菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" 解决consle提示信息输出乱码 
+language messages zh_CN.utf-8      " Gvim 下启用此属性
 
 "==========================================
 " Show 展示/排版等界面格式设置
@@ -282,10 +290,6 @@ if has("win32")
 else
     set fileencoding=utf-8
 endif
-
-"解决GVIM菜单乱码
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
 
 "共享剪贴板  
 set clipboard+=unnamed 
