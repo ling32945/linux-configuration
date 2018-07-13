@@ -106,7 +106,7 @@ fi
 if [ 1 ]; then
     echo "Config Git"
     git config --global user.name "Jae Liu"
-    git config --global user.email jie.liu@dianrong.com 
+    git config --global user.email ling32945@sina.com 
     git config --global core.editor vim
     git config --global merge.tool vimdiff
 
