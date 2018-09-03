@@ -106,7 +106,7 @@ fi
 if [ 1 ]; then
     echo "Config Git"
     git config --global user.name "Jae Liu"
-    git config --global user.email jie.liu@dianrong.com 
+    #git config --global user.email ling32945@sina.com
     git config --global core.editor vim
     git config --global merge.tool vimdiff
 
@@ -164,6 +164,21 @@ id $curUser | grep $gidOfApp
 if [ $? -ne 0 ]; then
     gpasswd -a $curUser app
 fi
+
+
+# config history
+cat << EOF >> /etc/profile
+
+# history config
+HISTTIMEFORMAT='%F %T '
+HISTSIZE="5000"
+HISTFILESIZE=5000
+HISTCONTROL=ignoredups
+HISTCONTROL=ignorespace
+HISTCONTROL=ignorespace:erasedups
+shopt -s histappend
+PROMPT_COMMAND="history -a"
+EOF
 
 exit;
 
