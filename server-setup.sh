@@ -167,18 +167,32 @@ fi
 
 
 # config history
-cat << EOF >> /etc/profile
+grep "history config" /etc/profile
+if [ $? -ne 0 ]; then
+    cat << EOF >> /etc/profile
 
 # history config
 HISTTIMEFORMAT='%F %T '
 HISTSIZE="5000"
 HISTFILESIZE=5000
-HISTCONTROL=ignoredups
-HISTCONTROL=ignorespace
+#HISTCONTROL=ignoredups
+#HISTCONTROL=ignorespace
 HISTCONTROL=ignorespace:erasedups
 shopt -s histappend
 PROMPT_COMMAND="history -a"
 EOF
+fi
+
+# config PS1
+grep "PS1 config" /etc/profile
+if [ $? -ne 0 ]; then
+    cat << EOF >> /etc/profile
+
+# PS1 config
+PS1='\[\e[37;1m[\]\[\e[31;1m\]\u\[\e[39;1m\]@\[\e[33;1m\]\H \[\e[34;1m\]\w\[\e[37;1m\]]\n\[\e[32;1m\]\\$ \[\e[0m\]'
+EOF
+fi
+
 
 exit;
 
