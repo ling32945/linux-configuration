@@ -1,8 +1,8 @@
 "==========================================
 " Author:  Jae
-" Version: 2
+" Version: 3
 " Email: 
-" Last_modify: 2018-04-27
+" Last_modify: 2018-12-19
 " Sections:
 "     ->Vundle 设置Vundle
 "     ->General 基础设置
@@ -16,7 +16,29 @@
 
 
 "==========================================
-" Vundle Vundle 设置
+" 判断操作系统是Windows还是Unix
+"==========================================
+let g:iswindows = 0
+let g:isunix = 0
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+    let g:iswindows = 1
+else
+    let g:isunix = 1
+endif
+
+
+"==========================================
+" 判断是终端还是 Gvim
+"==========================================
+if has("gui_running")
+    let g:isGUI = 1
+else
+    let g:isGUI = 0
+endif
+
+
+"==========================================
+" Vundle 设置
 "==========================================
 
 filetype off                  " required
@@ -52,6 +74,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'jlanzarotta/bufexplorer'
 " Install YouCompleteMe
 Plugin 'Valloric/YouCompleteMe'
+" Install Powerline
+Plugin 'Lokaltog/vim-powerline'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -79,19 +103,27 @@ filetype on
 filetype indent on
 "允许插件
 filetype plugin on
-"启动自动补全
+" 启动自动补全
 filetype plugin indent on
 
-"非兼容vi模式。去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
+" 非兼容vi模式。去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 set nocompatible
 set autoread            " 文件修改之后自动载入。
 set shortmess=atI       " 启动的时候不显示那个援助索马里儿童的提示
+
+" 共享剪贴板
+set clipboard+=unnamed
+
+" 自动保存
+set autowrite
+
+" 在处理未保存或只读文件的时候，弹出确认
+set confirm
 
 " 备份,到另一个位置. 防止误删, 目前是取消备份
 "set backup
 "set backupext=.bak
 "set backupdir=~/bak/vimbk/
-
 " 取消备份。 视情况自己改
 set nobackup
 set noswapfile
@@ -104,8 +136,7 @@ set cursorline              " 突出显示当前行
 "好处：误删什么的，如果以前屏幕打开，可以找回
 set t_ti= t_te=
 
-
-"- 则点击光标不会换,用于复制
+"- 鼠标点击光标不会换,用于复制
 set mouse-=a           " 鼠标暂不启用, 键盘党....
 "set mouse=a
 " 修复ctrl+m 多光标操作选择的bug，但是改变了ctrl+v进行字符选中时将包含光标下的字符
@@ -115,9 +146,12 @@ set selectmode=mouse,key
 "set selection=exclusive
 "set selectmode=mouse,key
 
+" change the terminal's title
+set title
+
 " No annoying sound on errors
 " 去掉输入错误的提示声音
-set title               " change the terminal's title
+set noeb
 set novisualbell        " don't beep
 set noerrorbells        " don't beep
 set t_vb=
@@ -125,6 +159,11 @@ set tm=500
 
 " 设置buffer可写
 "set modifiable
+
+" A buffer becomes hidden when it is abandoned
+set hidden
+set wildmode=list:longest
+set ttyfast
 
 " 设置使用文本标记
 set ma
@@ -139,22 +178,35 @@ set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,chinese,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 
 set helplang=cn
-"set langmenu=zh_CN.utf-8 " Gvim 下启用此属性
-"set enc=2byte-gb18030
+if (g:isGUI)
+    set langmenu=zh_CN.utf-8 " Gvim 下启用此属性
+    set enc=2byte-gb18030
 
-" 下面这句只影响普通模式 (非图形界面) 下的 Vim。
-set termencoding=utf-8
+    " 解决GVIM菜单乱码
+    source $VIMRUNTIME/delmenu.vim
+    source $VIMRUNTIME/menu.vim
+
+    " 解决consle提示信息输出乱码
+    language messages zh_CN.utf-8      " Gvim 下启用此属性
+
+    set fileencoding=chinese
+else
+    " 下面这句只影响Terminal模式下的 Vim。
+    set termencoding=utf-8
+endif
 
 "set guifont=Monaco:h20          " 字体 && 字号
 set guifont=Source_Code_Pro:h12 "设置字体为Source Code Pro，大小12，设置单字节字符
 "set guifontwide=幼圆:h12 "设置字体为 幼圆，大小12，设置双字节字符
 
-" 解决GVIM菜单乱码
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
 
-" 解决consle提示信息输出乱码 
-language messages zh_CN.utf-8      " Gvim 下启用此属性
+" 如遇Unicode值大于255的文本，不必等到空格再折行。
+set formatoptions+=m
+" 合并两行中文时，不在中间加空格：
+set formatoptions+=B
+
 
 "==========================================
 " Show 展示/排版等界面格式设置
@@ -166,11 +218,14 @@ set nowrap                    " 取消换行。
 
 "set background=light
 
-"if has('gui_running')
-"    set background=light
-"else
-"    set background=dark
-"endif
+if (g:isGUI)
+    set background=light
+
+    "set guioptions-=T           " 隐藏工具栏
+    "set guioptions-=m           " 隐藏菜单栏
+else
+    set background=dark
+endif
 
 "colors darkblue     " 设置背景主题
 "colorscheme solarized
@@ -193,18 +248,22 @@ set incsearch
 " 有一个或以上大写字母时仍大小写敏感
 set smartcase     " ignore case if search pattern is all lowercase, case-sensitive otherwise
 
+" syntax    使用语法高亮
+syntax enable
+
 " 代码折叠
 set foldenable
+
 " 折叠方法
 " manual    手工折叠
 " indent    使用缩进表示折叠
 " expr      使用表达式定义折叠
-" syntax    使用语法高亮
-syntax enable
 " diff      对没有更改的文本进行折叠
 " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
 set foldmethod=indent
 set foldlevel=99
+
+"set foldcolumn=0
 
 "Smart indent
 set smartindent
@@ -219,11 +278,6 @@ set smarttab      " insert tabs on the start of a line according to shiftwidth, 
 set expandtab                " 将Tab自动转化成空格    [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
 
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>'
-
-" A buffer becomes hidden when it is abandoned
-set hidden
-set wildmode=list:longest
-set ttyfast
 
 
 "行号变成相对，可以用 nj  nk   进行跳转 5j   5k 上下跳5行
@@ -272,39 +326,26 @@ set scrolloff=3
 
 "set winwidth=79
 
-" 命令行（在状态行下）的高度，默认为1，这里是2
-set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}    "状态行显示的内容
 " Always show the status line
 set laststatus=2
-
-" Use Unix as the standard file type
-set ffs=unix,dos,mac
-
-" 如遇Unicode值大于255的文本，不必等到空格再折行。
-set formatoptions+=m
-" 合并两行中文时，不在中间加空格：
-set formatoptions+=B
-
-if has("win32")
-    set fileencoding=chinese
-else
-    set fileencoding=utf-8
-endif
-
-"共享剪贴板  
-set clipboard+=unnamed 
-"自动保存
-set autowrite
-"set guioptions-=T           " 隐藏工具栏
-"set guioptions-=m           " 隐藏菜单栏
-""set foldcolumn=0
-""set foldmethod=indent 
-""set foldlevel=3 
-" 不要使用vi的键盘模式，而是vim自己的
-" 去掉输入错误的提示声音
-set noeb
-" 在处理未保存或只读文件的时候，弹出确认
-set confirm
+" 命令行（在状态行下）的高度，默认为1，这里是2
+"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}    "状态行显示的内容
+set statusline=                                       " clear statusline
+set statusline+=%l                                    " current line number
+set statusline+=/%L                                   " total lines
+set statusline+=(%p%%)                                " percentage through the file
+set statusline+=%4c                                   " cursor column
+set statusline+=\|%-4{strwidth(getline('.'))}         " line length
+"set statusline+=%{LinterStatus()}                     " ALE status
+set statusline+=%{&buftype!='terminal'?expand('%:p:h:t').'\\'.expand('%:t'):expand('%')}  " dir\filename.ext
+set statusline+=%m                                    " modified flag
+set statusline+=%r                                    " read only flag
+set statusline+=%=                                    " left/right separator
+set statusline+=\ \|\ %{getcwd()}                     " current working directory
+set statusline+=\ [%{strlen(&ft)?(&ft\ .\ \',\'):''}  " filetype
+set statusline+=%{strlen(&fenc)?(&fenc\ .\ \',\'):''} " file encoding
+set statusline+=%{&ff}]                               " line endings
+set statusline+=%<                                    " start to truncate here
 
 set linespace=0
 " 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
@@ -313,8 +354,8 @@ set linespace=0
 set report=0
 " 在被分割的窗口间显示空白，便于阅读
 set fillchars=vert:\ ,stl:\ ,stlnc:\
-" 为C程序提供自动缩进
-"自动补全
+
+
 "==========================================
 " others 其它配置
 "==========================================
@@ -374,9 +415,10 @@ set whichwrap+=<,>,h,l
 " 允许backspace和光标键跨越行边界
 "set whichwrap+=<,>,h,l
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"""""新建文件
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"==========================================
+" 新建文件
+"==========================================
 "新建.c,.h,.sh,.java文件，自动插入文件头 
 autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.py exec ":call SetTitle()" 
 ""定义函数SetTitle，自动插入文件头 
@@ -418,9 +460,9 @@ endfunc
 autocmd BufNewFile * normal G
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""实用设置
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"==========================================
+" 实用设置
+"==========================================
 if has("autocmd")
       autocmd BufReadPost *
           \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -449,9 +491,11 @@ autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 ""		return a:char
 ""	endif
 ""endfunction
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+"==========================================
 " CTags的设定  
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"==========================================
 let Tlist_Sort_Type = "name"    " 按照名称排序  
 let Tlist_Use_Right_Window = 1  " 在右侧显示窗口  
 let Tlist_Compart_Format = 1    " 压缩方式  

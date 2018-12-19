@@ -28,6 +28,33 @@ elif [ $curOSVersion = ${OSVersion[2]} ]; then
     yum update
 fi
 
+
+# Install Git
+which git
+if [ $? -ne 0 ]; then
+    echo "Info: Git is not installed, install it first!" 
+    if [[ $curOSVersion = ${OSVersion[0]} || $curOSVersion = ${OSVersion[1]} ]]; then
+        apt-get install git 
+    elif [ $curOSVersion = ${OSVersion[2]} ]; then
+        yum -y install git
+    fi
+
+fi
+
+if [ 1 ]; then
+    echo "Config Git"
+    git config --global user.name "Jae Liu"
+    #git config --global user.email ling32945@sina.com
+    git config --global core.editor vim
+    git config --global merge.tool vimdiff
+
+    git config --global color.status auto
+    git config --global color.diff auto
+    git config --global color.branch auto
+    git config --global color.interactive auto
+fi
+
+
 echo "Info: Config Vim"
 which vim
 if [ $? -ne 0 ]; then
@@ -45,8 +72,9 @@ echo "$(pwd)"
 
 vimrcFilePath=$(cd `dirname $0`; pwd)"/.vimrc"
 if [ -f $vimrcFilePath ]; then
-    cp $vimrcFilePath ~/
-    chown ${curUser}:${curUser} ~/.vimrc
+    #cp $vimrcFilePath ~/
+    #chown ${curUser}:${curUser} ~/.vimrc
+    ln -s $vimrcFilePath ~/.vimrc
 fi
 
 if [ ! -d ~/.vim ]; then
@@ -54,7 +82,6 @@ if [ ! -d ~/.vim ]; then
     mkdir ~/.vim
     chown $curUser:$curUser ~/.vim
 fi
-
 
 # Install Vim color scheme
 if [ ! -d ~/.vim/colors ]; then
@@ -88,32 +115,6 @@ if [ -d ~/.vim/bundle/Vundle.vim ]; then
     git pull
 else
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-fi
-
-
-# Install Git
-which git
-if [ $? -ne 0 ]; then
-    echo "Info: Git is not installed, install it first!" 
-    if [[ $curOSVersion = ${OSVersion[0]} || $curOSVersion = ${OSVersion[1]} ]]; then
-        apt-get install git 
-    elif [ $curOSVersion = ${OSVersion[2]} ]; then
-        yum -y install git
-    fi
-
-fi
-
-if [ 1 ]; then
-    echo "Config Git"
-    git config --global user.name "Jae Liu"
-    #git config --global user.email ling32945@sina.com
-    git config --global core.editor vim
-    git config --global merge.tool vimdiff
-
-    git config --global color.status auto
-    git config --global color.diff auto
-    git config --global color.branch auto
-    git config --global color.interactive auto
 fi
 
 
